@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34511.84
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObjectCubeServer", "ObjectCubeServer.csproj", "{AD1F57C0-D10A-4E48-9E87-32DF721DD9EC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD1F57C0-D10A-4E48-9E87-32DF721DD9EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD1F57C0-D10A-4E48-9E87-32DF721DD9EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD1F57C0-D10A-4E48-9E87-32DF721DD9EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD1F57C0-D10A-4E48-9E87-32DF721DD9EC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {47E21C32-6595-4CFA-B06B-7F92AFB7A1D4}
+	EndGlobalSection
+EndGlobal
