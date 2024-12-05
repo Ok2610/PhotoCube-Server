@@ -19,11 +19,11 @@ namespace ObjectCubeServer.Services
 
             if (totalNumberOfFilters == 0)
             {
-                const string baseQuery = "select X.idx as x, X.idy as y, X.idz as z, X.object_id as id, O.file_uri as fileURI, X.cnt as count from(select 1 as idx, 1 as idy, 1 as idz, max(R1.id) as object_id, count(*) as cnt from medias R1 group by idx, idy, idz) X join medias O on X.object_id = O.id;";
+                const string baseQuery = "select X.idx as x, X.idy as y, X.idz as z, X.object_id as id, O.file_uri as fileURI, O.thumbnail_uri as thumbnailURI, X.cnt as count from(select 1 as idx, 1 as idy, 1 as idz, max(R1.id) as object_id, count(*) as cnt from medias R1 group by idx, idy, idz) X join medias O on X.object_id = O.id;";
                 return baseQuery;
             }
             
-            var queryFront = new StringBuilder("select X.idx as x, X.idy as y, X.idz as z, X.object_id as id, O.file_uri as fileURI, X.cnt as count from (select ");
+            var queryFront = new StringBuilder("select X.idx as x, X.idy as y, X.idz as z, X.object_id as id, O.file_uri as fileURI, O.thumbnail_uri as thumbnailURI, X.cnt as count from (select ");
             var queryMiddle =  new StringBuilder(" from (");
             var queryEnd =  new StringBuilder(" group by idx, idy, idz");
 
@@ -98,11 +98,11 @@ namespace ObjectCubeServer.Services
             if (totalNumberOfFilters == 0)
             {
                 // No ordering here, would be very expensive!
-                string BaseQuery = "select O.id as Id, O.file_uri as fileURI from medias O;";
+                string BaseQuery = "select O.id as Id, O.file_uri as fileURI, O.thumbnail_uri as thumbnailURI from medias O;";
                 return BaseQuery;
             }
 
-            var queryFront = new StringBuilder("select distinct O.id as Id, O.file_uri as fileURI, TS.name as T from (select R1.object_id ");
+            var queryFront = new StringBuilder("select distinct O.id as Id, O.file_uri as fileURI, O.thumbnail_uri as thumbnailURI, TS.name as T from (select R1.object_id ");
             var queryMiddle = new StringBuilder(" from (");
             var queryEnd = new StringBuilder(") X join medias O on X.object_id = O.id join taggings R2 on O.id = R2.object_id join timestamp_tags TS on R2.tag_id = TS.id join tagsets S on TS.tagset_id = S.id where S.name = 'Timestamp UTC' order by TS.name;");
 
@@ -171,11 +171,11 @@ namespace ObjectCubeServer.Services
             if (totalNumberOfFilters != 1)
             {
                 // No ordering here, would be very expensive!
-                string BaseQuery = "select O.id as Id, O.file_uri as fileURI from medias O;";
+                string BaseQuery = "select O.id as Id, O.file_uri as fileURI, O.thumbnail_uri as thumbnailURI from medias O;";
                 return BaseQuery;
             }
 
-            var queryFront = new StringBuilder("select O.id as Id, O.file_uri as fileURI, TS1.name as T ");
+            var queryFront = new StringBuilder("select O.id as Id, O.file_uri as fileURI, O.thumbnail_uri as thumbnailURI, TS1.name as T ");
             var queryMiddle = new StringBuilder("from medias O join taggings R1 on O.id = R1.object_id join timestamp_tags TS1 on R1.tag_id = TS1.id join tagsets S on TS1.tagset_id = S.id join timestamp_tags TS2 on TS1.tagset_id = TS2.tagset_id and TS1.name between TS2.name - interval '30 minutes' and TS2.name + interval '30 minutes' join taggings R2 on TS2.id = R2.tag_id where S.name = 'Timestamp UTC' and R2.object_id = ");
             var queryEnd = new StringBuilder(" order by TS1.name;");
 

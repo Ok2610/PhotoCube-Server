@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography.X509Certificates;
 
 
 namespace ObjectCubeServer.Models.DomainClasses
@@ -18,7 +19,9 @@ namespace ObjectCubeServer.Models.DomainClasses
         public int id { get; set; }
         public string fileURI { get; set; }
 
-        public SingleObjectCell(int x, int y, int z, int count, int id, string fileURI)
+        public string thumbnailURI { get; set; }
+
+        public SingleObjectCell(int x, int y, int z, int count, int id, string fileURI, string thumbnailURI)
         {
             this.x = x;
             this.y = y;
@@ -26,6 +29,7 @@ namespace ObjectCubeServer.Models.DomainClasses
             this.count = count;
             this.id = id;
             this.fileURI = fileURI;
+            this.thumbnailURI = thumbnailURI;
         }
     }
 }

@@ -12,10 +12,13 @@ namespace ObjectCubeServer.Models.PublicClasses
         public int Id { get; set; }
         public string FileURI { get; set; }
 
-        public PublicCubeObject(int id, string fileURI)
+        public string ThumbnailURI { get; set; }
+
+        public PublicCubeObject(int id, string fileURI, string thumbnailURI)
         {
             Id = id;
             FileURI = fileURI;
+            ThumbnailURI = thumbnailURI;
         }
     }
 }
