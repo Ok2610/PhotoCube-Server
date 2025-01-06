@@ -1,12 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ObjectCubeServer.Models.Contexts;
 using ObjectCubeServer.Models.DomainClasses;
 using ObjectCubeServer.Models.PublicClasses;
+using ObjectCubeServer.Services;
 
 namespace ObjectCubeServer.Controllers
 {
@@ -28,7 +33,7 @@ namespace ObjectCubeServer.Controllers
             List<PublicTagset> allTagsets = await coContext.Tagsets
                 .Select(t => new PublicTagset(t.Id, t.Name))
                 .ToListAsync();
-
+            Console.WriteLine("LOG: Finished api/tagset");
             return Ok(allTagsets); //implicit Ignore self referencing loops
         }
 
@@ -36,13 +41,33 @@ namespace ObjectCubeServer.Controllers
         [HttpGet("{id:int}", Name = "GetTagset")]
         public async Task<ActionResult<Tagset>> Get(int id)
         {
+            //List<SingleObjectCell> singlecells = await
+            //    coContext.SingleObjectCells.FromSqlRaw(queryGenerationService.generateSQLQueryForState(axisX.Type, axisX.Id, axisY.Type, axisY.Id, axisZ.Type, axisZ.Id, filtersList)).ToListAsync();
+            //result = singlecells.Select(c =>
+            //    new PublicCell(axisX.Ids[c.x], axisY.Ids[c.y], axisZ.Ids[c.z], c.count, c.id, c.fileURI, c.thumbnailURI)).ToList();
+
             Tagset tagsetWithId = await coContext.Tagsets
-                .Where(ts => ts.Id == id)
-                .Include(ts => ts.Tags)
-                .Include(ts => ts.Hierarchies)
-                .FirstOrDefaultAsync();
-            
-            return Ok(tagsetWithId);
+                    .Where(ts => ts.Id == id)
+                    .FirstOrDefaultAsync();
+            String _id = id.ToString();
+            String SQLquery;
+
+            SQLquery = "select id, name, tagsetId, tagTypeId, tagsetIdReplicate, tagType, objectTagRelations from tagset_tags where tagsetId = " + _id + ";";
+            List<PublicTagInTagset> resulttags;
+            List<TagInTagset> tags = await
+                coContext.TagsInTagset.FromSqlRaw(SQLquery).ToListAsync();
+            resulttags = tags.Select(c => c.GetPublicTagInTagset()).ToList();
+            Console.WriteLine(SQLquery);
+
+            SQLquery = "select id, name, tagsetId, nodes, rootNodeId from tagset_hierarchies where tagsetId = " + _id + ";";
+            List<PublicHierarchyInTagset> resulthierarchies;
+            List<HierarchyInTagset> hierarchies = await
+                coContext.HierarchiesInTagset.FromSqlRaw(SQLquery).ToListAsync();
+            resulthierarchies = hierarchies.Select(c => c.GetPublicHierarchyInTagset()).ToList();
+            Console.WriteLine(SQLquery);
+
+            PublicAugmentedTagset result = new PublicAugmentedTagset(tagsetWithId.Id, tagsetWithId.Name, resulttags, resulthierarchies);
+            return Ok(result);
         }
 
         // GET: api/tagset/name=Year

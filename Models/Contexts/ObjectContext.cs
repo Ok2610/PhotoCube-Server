@@ -46,6 +46,8 @@ namespace ObjectCubeServer.Models.Contexts
         public DbSet<TagType> TagTypes { get; set; }
         public DbSet<SingleObjectCell> SingleObjectCells { get; set; }
         public DbSet<PublicCubeObject> PublicCubeObjects { get; set; }
+        public DbSet<TagInTagset> TagsInTagset { get; set; }
+        public DbSet<HierarchyInTagset> HierarchiesInTagset { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
