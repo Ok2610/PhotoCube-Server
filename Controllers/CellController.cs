@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -24,9 +27,9 @@ namespace ObjectCubeServer.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SingleObjectCell>>> Get(string xAxis, string yAxis, string zAxis, string filters, string all, string timeline)
+        public async Task<ActionResult<IEnumerable<PublicCell>>> Get(string xAxis, string yAxis, string zAxis, string filters, string all, string timeline)
         {
-            bool xDefined = xAxis != null;
+			bool xDefined = xAxis != null;
             bool yDefined = yAxis != null;
             bool zDefined = zAxis != null;
             bool filtersDefined = filters != null;
@@ -55,8 +58,6 @@ namespace ObjectCubeServer.Controllers
             }
 
             //Creating Cells:
-            List<PublicCell> result;
-
             //// If there are no axis or filters, it means it will call for the whole data set.
             //// We don't want to get all 190K cubeObjects in this case, but get only small number (1st page) and return fast.
 
@@ -111,8 +112,8 @@ namespace ObjectCubeServer.Controllers
             //coContext.CubeObjects.FromSqlRaw(queryGenerationService.generateSQLQueryForCells(axisX.AxisType, axisX.Id, axisY.AxisType, axisY.Id, axisZ.AxisType, axisZ.Id)).ToList();
             List<SingleObjectCell> singlecells = await
                 coContext.SingleObjectCells.FromSqlRaw(queryGenerationService.generateSQLQueryForState(axisX.Type, axisX.Id, axisY.Type, axisY.Id, axisZ.Type, axisZ.Id, filtersList)).ToListAsync();
-            result = singlecells.Select(c =>
-                new PublicCell(axisX.Ids[c.x], axisY.Ids[c.y], axisZ.Ids[c.z], c.count, c.id, c.fileURI, c.thumbnailURI)).ToList();
+            var result = singlecells.Select(c =>
+                new PublicCell(axisX.Ids[c.x], axisY.Ids[c.y], axisZ.Ids[c.z], c.count, c.id, c.fileURI, c.thumbnailURI));
 
             //If cells have no cubeObjects, remove them:
             //cells.RemoveAll(c => !c.CubeObjects.Any());
