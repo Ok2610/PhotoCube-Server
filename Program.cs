@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace ObjectCubeServer
 {
@@ -9,7 +10,22 @@ namespace ObjectCubeServer
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .WriteTo.File("Logs/requests-.log",
+                          rollingInterval: RollingInterval.Day,
+                          retainedFileCountLimit: 7,
+                          shared: true)
+            .CreateLogger();
+
+            try
+            {
+                CreateHostBuilder(args).UseSerilog().Build().Run();
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

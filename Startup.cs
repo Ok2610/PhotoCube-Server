@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,21 @@ namespace ObjectCubeServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpLogging(o =>
+            {
+                o.LoggingFields = HttpLoggingFields.RequestPropertiesAndHeaders |
+                                  HttpLoggingFields.ResponsePropertiesAndHeaders |
+                                  HttpLoggingFields.RequestBody |
+                                  HttpLoggingFields.ResponseBody;
+                o.RequestBodyLogLimit = 4096;
+                o.ResponseBodyLogLimit = 4096;
+                o.MediaTypeOptions.AddText("application/json");
+
+                // avoid secrets
+                o.RequestHeaders.Remove("Authorization");
+                o.RequestHeaders.Remove("Cookie");
+            });
+
             services.AddMvc(option => option.EnableEndpointRouting = false );
             
             // enable json input/output for controllers
@@ -70,12 +86,14 @@ namespace ObjectCubeServer
             else
             {
                 app.UseHsts();
-            }
+                app.UseHttpsRedirection();
+			}
 
-            // Shows UseCors with named policy.
-            app.UseCors(builder => builder.WithOrigins(@"http://localhost:3000", @"https://localhost:3000").AllowAnyHeader());
+			// Shows UseCors with named policy.
+			app.UseCors(builder => builder.WithOrigins(@"http://localhost:3000", @"https://localhost:3000").AllowAnyHeader());
 
-            app.UseHttpsRedirection();
+            app.UseHttpLogging();
+
             app.UseRouting();
             app.UseMvc();
         }
