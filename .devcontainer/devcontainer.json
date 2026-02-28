@@ -1,0 +1,22 @@
+{
+  "name": "PhotoCube Server (.NET 9)",
+  "image": "mcr.microsoft.com/devcontainers/dotnet:9.0",
+  "forwardPorts": [5002],
+  "portsAttributes": {
+    "5002": { "label": "PhotoCube API", "onAutoForward": "notify" }
+  },
+  "postCreateCommand": "dotnet restore",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "dotnet.defaultSolution": "ObjectCubeServer.sln"
+      },
+      "extensions": [
+        "ms-dotnettools.csdevkit",
+        "ms-dotnettools.csharp",
+        "kreativ-software.csharpextensions",
+        "patcx.vscode-nuget-gallery"
+      ]
+    }
+  }
+}
